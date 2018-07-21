@@ -11,8 +11,8 @@
             "settings": {
                 "broker": "tcp://192.168.1.218:1883",
                 "id": "IotGateway",
-                "user": "user",
-                "password": "password",
+                "user": "",
+                "password": "",
                 "store": "ds",
                 "qos": "0",
                 "cleansess": "false"
