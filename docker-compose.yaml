@@ -5,6 +5,7 @@ services:
     expose:
       - "1883"
     privileged: true
+    network_mode: "host"
   flogo:
     build: ./flogo
     pid: "host"
