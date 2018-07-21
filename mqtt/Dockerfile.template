@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y mosquitto
 
 RUN adduser --system --disabled-password --disabled-login mosquitto
 
+RUN mkdir -p /mqtt/config /mqtt/data /mqtt/log
+RUN chown -R mosquitto:mosquitto /mqtt
 COPY config /mqtt/config
 VOLUME ["/mqtt/config", "/mqtt/data", "/mqtt/log"]
 
