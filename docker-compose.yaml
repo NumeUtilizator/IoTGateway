@@ -4,8 +4,6 @@ services:
     build: ./mqtt
     expose:
       - "1883"
-    pid: "host"
-    network_mode: "host"
     privileged: true
   flogo:
     build: ./flogo
