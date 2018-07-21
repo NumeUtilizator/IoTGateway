@@ -3,8 +3,7 @@ services:
   cserver:
     build: ./mqtt
     expose:
-      - "1883:1883"
-      - "9001:9001"
+      - "1883"
     volumes:
             - "${PWD}/data:/mqtt/data"
             - "${PWD}/logs:/mqtt/logs"
