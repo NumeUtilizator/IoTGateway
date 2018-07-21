@@ -4,9 +4,6 @@ services:
     build: ./mqtt
     expose:
       - "1883"
-    volumes:
-            - "${PWD}/data:/mqtt/data"
-            - "${PWD}/logs:/mqtt/logs"
     pid: "host"
     network_mode: "host"
     privileged: true
