@@ -1,9 +1,7 @@
 version: '2'
 services:
-  cserver:
+  mqtt:
     build: ./mqtt
     expose:
       - "1883"
-    pid: "host"
-    network_mode: "host"
-    privileged: true
+  
