@@ -17,4 +17,6 @@ WORKDIR $GOPATH/src/flogo-app/$FLOGO_APP_NAME
 
 RUN flogo build -o -e
 
+EXPOSE 80
+
 CMD bin/$FLOGO_APP_NAME
