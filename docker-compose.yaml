@@ -9,7 +9,8 @@ services:
     #restart: always
   flogo:
     build: ./flogo
-
+    ports:
+      - "1883:1883"
     network_mode: "host"
     privileged: true
     restart: always
