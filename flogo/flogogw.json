@@ -6,18 +6,19 @@
     "description": "IoT gateway for Raspberry pi",
     "triggers": [
         {
-            "id": "receive_mqtt_message_2",
-            "ref": "github.com/jvanderl/flogo-components/trigger/mqtt2",
-            "name": "Receive MQTT Message 2",
-            "description": "MQTT Topic Subscriber",
+            "id": "receive_mqtt_message",
+            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/mqtt",
+            "name": "Receive MQTT Message",
+            "description": "Simple MQTT Trigger",
             "settings": {
                 "broker": "tcp://192.168.1.218",
-                "id": "",
-                "user": "",
+                "id": null,
+                "user": null,
                 "password": "",
-                "store": "",
-                "qos": 0,
-                "cleansess": false
+                "store": ":memory:",
+                "topic": "vfdemo/Alexa",
+                "qos": "0",
+                "cleansess": "true"
             },
             "handlers": [
                 {
@@ -28,7 +29,7 @@
                         }
                     },
                     "settings": {
-                        "topic": "vfdemo/device/#"
+                        "topic": "vfdemo/Alexa"
                     }
                 }
             ]
@@ -42,16 +43,132 @@
                 "tasks": [
                     {
                         "id": "log_2",
-                        "name": "Log Message",
+                        "name": "Log MQTT",
                         "description": "Simple Log Activity",
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
                             "input": {
-                                "message": "",
-                                "flowInfo": "false",
-                                "addToFlow": "false"
+                                "message": "Recieved",
+                                "flowInfo": "true",
+                                "addToFlow": "true"
                             }
                         }
+                    },
+                    {
+                        "id": "gpio_3",
+                        "name": "Set Direction GPIO",
+                        "description": "Control raspberry gpio",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+                            "input": {
+                                "method": "Direction",
+                                "pinNumber": "23",
+                                "direction": "Output",
+                                "state": "",
+                                "Pull": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "gpio_4",
+                        "name": "Read State GPIO&#160;",
+                        "description": "Control raspberry gpio",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+                            "input": {
+                                "method": "Read State",
+                                "pinNumber": "23",
+                                "direction": "",
+                                "state": "",
+                                "Pull": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "log_5",
+                        "name": "SetToOnLog",
+                        "description": "Simple Log Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "input": {
+                                "message": "Turning on the led",
+                                "flowInfo": "true",
+                                "addToFlow": "true"
+                            }
+                        }
+                    },
+                    {
+                        "id": "gpio_7",
+                        "name": "SetToOn GPIO",
+                        "description": "Control raspberry gpio",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+                            "input": {
+                                "method": "Set State",
+                                "pinNumber": "23",
+                                "direction": "",
+                                "state": "High",
+                                "Pull": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "log_6",
+                        "name": "SetToOffLog",
+                        "description": "Simple Log Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "input": {
+                                "message": "Turning off the led",
+                                "flowInfo": "true",
+                                "addToFlow": "true"
+                            }
+                        }
+                    },
+                    {
+                        "id": "gpio_8",
+                        "name": "Control GPIO",
+                        "description": "Control raspberry gpio",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+                            "input": {
+                                "method": "Set State",
+                                "pinNumber": 0,
+                                "direction": "",
+                                "state": "Low",
+                                "Pull": ""
+                            }
+                        }
+                    }
+                ],
+                "links": [
+                    {
+                        "from": "log_2",
+                        "to": "gpio_3"
+                    },
+                    {
+                        "from": "gpio_3",
+                        "to": "gpio_4"
+                    },
+                    {
+                        "from": "gpio_4",
+                        "to": "log_5",
+                        "type": "expression",
+                        "value": "read-state.result==0"
+                    },
+                    {
+                        "from": "log_5",
+                        "to": "gpio_7"
+                    },
+                    {
+                        "from": "gpio_4",
+                        "to": "log_6",
+                        "type": "expression",
+                        "value": "read-state.result==1"
+                    },
+                    {
+                        "from": "log_6",
+                        "to": "gpio_8"
                     }
                 ]
             }
