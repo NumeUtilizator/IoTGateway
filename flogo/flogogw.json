@@ -11,10 +11,10 @@
             "name": "Receive MQTT Message",
             "description": "Simple MQTT Trigger",
             "settings": {
-                "broker": "tcp://192.168.1.218",
-                "id": null,
+                "broker": "tcp://192.168.1.218:1883",
+                "id": "Gateway IN",
                 "user": null,
-                "password": "",
+                "password": null,
                 "store": ":memory:",
                 "topic": "vfdemo/Alexa",
                 "qos": "0",
@@ -29,7 +29,7 @@
                         }
                     },
                     "settings": {
-                        "topic": "vfdemo/Alexa"
+                        "topic": null
                     }
                 }
             ]
