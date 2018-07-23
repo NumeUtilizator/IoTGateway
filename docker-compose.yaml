@@ -9,6 +9,6 @@ services:
     restart: always
   flogo:
     build: ./flogo
-    network_mode: "host"
+    #network_mode: "host"
     privileged: true
     restart: always
