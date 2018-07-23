@@ -12,3 +12,5 @@ services:
     network_mode: "host"
     privileged: true
     restart: always
+    depends_on: 
+      - mqtt
