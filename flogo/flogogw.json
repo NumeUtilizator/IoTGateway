@@ -1,7 +1,7 @@
 {
     "name": "HelloWorld",
     "model": "tibco-simple",
-    "type": 1,
+    "type": "flogo:app",
     "attributes": [],
     "rootTask": {
         "id": 1,
