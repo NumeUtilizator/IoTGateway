@@ -1,51 +1,34 @@
 {
-    "name": "flogo-simple-app",
+    "name": "FlogoGW",
     "type": "flogo:app",
     "version": "0.0.1",
     "appModel": "1.0.0",
+    "description": "IoT gateway for Raspberry pi",
     "triggers": [
         {
-            "id": "rest_interface",
-            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/rest",
-            "name": "RESTInterface",
-            "description": "Simple REST Trigger",
+            "id": "receive_mqtt_message_2",
+            "ref": "github.com/jvanderl/flogo-components/trigger/mqtt2",
+            "name": "Receive MQTT Message 2",
+            "description": "MQTT Topic Subscriber",
             "settings": {
-                "port": "80"
+                "broker": "tcp://192.168.1.218",
+                "id": "",
+                "user": "",
+                "password": "",
+                "store": "",
+                "qos": 0,
+                "cleansess": false
             },
             "handlers": [
                 {
                     "action": {
                         "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
                         "data": {
-                            "flowURI": "res://flow:hello_world"
-                        },
-                        "mappings": {
-                            "input": [
-                                {
-                                    "mapTo": "Name",
-                                    "type": "assign",
-                                    "value": "$.pathParams.name"
-                                }
-                            ],
-                            "output": [
-                                {
-                                    "mapTo": "code",
-                                    "type": "literal",
-                                    "value": 200
-                                },
-                                {
-                                    "mapTo": "data",
-                                    "type": "object",
-                                    "value": {
-                                        "Greetings": "{{$.Greeting}}"
-                                    }
-                                }
-                            ]
+                            "flowURI": "res://flow:device_to_gw"
                         }
                     },
                     "settings": {
-                        "method": "GET",
-                        "path": "/hello/:name"
+                        "topic": "vfdemo/device/#"
                     }
                 }
             ]
@@ -53,23 +36,9 @@
     ],
     "resources": [
         {
-            "id": "flow:hello_world",
+            "id": "flow:device_to_gw",
             "data": {
-                "name": "HelloWorld",
-                "metadata": {
-                    "input": [
-                        {
-                            "name": "Name",
-                            "type": "string"
-                        }
-                    ],
-                    "output": [
-                        {
-                            "name": "Greeting",
-                            "type": "string"
-                        }
-                    ]
-                },
+                "name": "Device to GW",
                 "tasks": [
                     {
                         "id": "log_2",
@@ -81,40 +50,8 @@
                                 "message": "",
                                 "flowInfo": "false",
                                 "addToFlow": "false"
-                            },
-                            "mappings": {
-                                "input": [
-                                    {
-                                        "type": "assign",
-                                        "value": "$flow.Name",
-                                        "mapTo": "message"
-                                    }
-                                ]
                             }
                         }
-                    },
-                    {
-                        "id": "actreply_3",
-                        "name": "Reply To Trigger",
-                        "description": "Simple Reply Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreply",
-                            "input": {
-                                "mappings": [
-                                    {
-                                        "mapTo": "Greeting",
-                                        "type": "expression",
-                                        "value": "string.concat(\"Welcome to Project Flogo, \", $flow.Name, \". My name is Flynn !\")"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                "links": [
-                    {
-                        "from": "log_2",
-                        "to": "actreply_3"
                     }
                 ]
             }
