@@ -8,7 +8,5 @@ services:
     network_mode: "host"
   flogo:
     build: ./flogo
-    expose:
-      - "80"
     network_mode: "host"
     privileged: true
