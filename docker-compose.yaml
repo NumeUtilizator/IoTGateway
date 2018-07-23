@@ -2,13 +2,13 @@ version: '2'
 services:
   mqtt:
     build: ./mqtt
-    expose:
-      - "1883"
+    ports:
+      - "1883:1883"
     privileged: true
     network_mode: "host"
     restart: always
   flogo:
     build: ./flogo
-    #network_mode: "host"
+    network_mode: "host"
     privileged: true
     restart: always
