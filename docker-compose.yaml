@@ -1,16 +1,17 @@
 version: '2'
 services:
-  mqtt:
-    build: ./mqtt
-    ports:
-      - "1883:1883"
-    privileged: true
-    network_mode: "host"
-    restart: always
+  #mqtt:
+    #build: ./mqtt
+    #ports:
+    #  - "1883:1883"
+    #privileged: true
+    #network_mode: "host"
+    #restart: always
   flogo:
     build: ./flogo
+
     network_mode: "host"
     privileged: true
     restart: always
-    depends_on: 
-      - mqtt
+    #depends_on: 
+    #  - mqtt
