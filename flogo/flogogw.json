@@ -1,68 +1,123 @@
 {
-    "name": "HelloWorld",
-    "model": "tibco-simple",
+    "name": "flogo-simple-app",
     "type": "flogo:app",
-    "attributes": [],
-    "rootTask": {
-        "id": 1,
-        "type": 1,
-        "activityType": "",
-        "name": "root",
-        "tasks": [
-            {
-                "id": 2,
-                "name": "Number Counter",
-                "type": 1,
-                "activityType": "tibco-counter",
-                "attributes": [
-                    {
-                        "name": "counterName",
-                        "value": "number",
-                        "type": "string"
-                    },
-                    {
-                        "name": "increment",
-                        "value": "true",
-                        "type": "boolean"
-                    },
-                    {
-                        "name": "reset",
-                        "value": "false",
-                        "type": "boolean"
-                    }
-                ]
+    "version": "0.0.1",
+    "appModel": "1.0.0",
+    "triggers": [
+        {
+            "id": "rest_interface",
+            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/rest",
+            "name": "RESTInterface",
+            "description": "Simple REST Trigger",
+            "settings": {
+                "port": "80"
             },
-            {
-                "id": 3,
-                "name": "Logger",
-                "type": 1,
-                "activityType": "tibco-log",
-                "attributes": [
+            "handlers": [
+                {
+                    "action": {
+                        "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
+                        "data": {
+                            "flowURI": "res://flow:hello_world"
+                        },
+                        "mappings": {
+                            "input": [
+                                {
+                                    "mapTo": "Name",
+                                    "type": "assign",
+                                    "value": "$.pathParams.name"
+                                }
+                            ],
+                            "output": [
+                                {
+                                    "mapTo": "code",
+                                    "type": "literal",
+                                    "value": 200
+                                },
+                                {
+                                    "mapTo": "data",
+                                    "type": "object",
+                                    "value": {
+                                        "Greetings": "{{$.Greeting}}"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "settings": {
+                        "method": "GET",
+                        "path": "/hello/:name"
+                    }
+                }
+            ]
+        }
+    ],
+    "resources": [
+        {
+            "id": "flow:hello_world",
+            "data": {
+                "name": "HelloWorld",
+                "metadata": {
+                    "input": [
+                        {
+                            "name": "Name",
+                            "type": "string"
+                        }
+                    ],
+                    "output": [
+                        {
+                            "name": "Greeting",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "tasks": [
                     {
-                        "name": "message",
-                        "value": "hello world",
-                        "type": "string"
+                        "id": "log_2",
+                        "name": "Log Message",
+                        "description": "Simple Log Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "input": {
+                                "message": "",
+                                "flowInfo": "false",
+                                "addToFlow": "false"
+                            },
+                            "mappings": {
+                                "input": [
+                                    {
+                                        "type": "assign",
+                                        "value": "$flow.Name",
+                                        "mapTo": "message"
+                                    }
+                                ]
+                            }
+                        }
                     },
                     {
-                        "name": "flowInfo",
-                        "value": "true",
-                        "type": "boolean"
-                    },
+                        "id": "actreply_3",
+                        "name": "Reply To Trigger",
+                        "description": "Simple Reply Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreply",
+                            "input": {
+                                "mappings": [
+                                    {
+                                        "mapTo": "Greeting",
+                                        "type": "expression",
+                                        "value": "string.concat(\"Welcome to Project Flogo, \", $flow.Name, \". My name is Flynn !\")"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "links": [
                     {
-                        "name": "addToFlow",
-                        "value": "true",
-                        "type": "boolean"
+                        "from": "log_2",
+                        "to": "actreply_3"
                     }
                 ]
             }
-        ],
-        "links": [
-            {
-                "id": 1,
-                "from": 2,
-                "to": 3,
-                "type": 0
-            }
-        ]
-    }
+        }
+    ]
 }
