@@ -2,7 +2,7 @@ FROM resin/%%RESIN_MACHINE_NAME%%-golang:slim
 
 ENV INITSYSTEM on
 ENV FLOGO_APP_FILE flogogw.json
-ENV FLOGO_APP_NAME FlogoGW
+ENV FLOGO_APP_NAME Alexa to GW
 
 RUN go get -u github.com/golang/dep/cmd/dep
 RUN go get -u github.com/TIBCOSoftware/flogo-cli/...
