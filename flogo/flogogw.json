@@ -11,7 +11,7 @@
             "name": "Receive MQTT Message",
             "description": "Simple MQTT Trigger",
             "settings": {
-                "broker": "tcp://172.0.0.1:1883",
+                "broker": "tcp://127.0.0.1:1883",
                 "id": "FLOGO_MQTT_CLIENT",
                 "user": "",
                 "password": "",
