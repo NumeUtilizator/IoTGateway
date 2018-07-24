@@ -48,7 +48,7 @@
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
                             "input": {
-                                "message": "ON",
+                                "message": "Message arrived",
                                 "flowInfo": "true",
                                 "addToFlow": "true"
                             }
@@ -78,9 +78,9 @@
                             "input": {
                                 "method": "Read State",
                                 "pinNumber": "23",
-                                "direction": "",
-                                "state": "",
-                                "Pull": ""
+                                "direction": null,
+                                "state": null,
+                                "Pull": null
                             }
                         }
                     },
@@ -113,6 +113,15 @@
                         }
                     },
                     {
+                        "id": "actreturn_10",
+                        "name": "Return",
+                        "description": "Simple Return Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
+                            "input": {}
+                        }
+                    },
+                    {
                         "id": "log_6",
                         "name": "SetToOffLog",
                         "description": "Simple Log Activity",
@@ -139,6 +148,15 @@
                                 "Pull": ""
                             }
                         }
+                    },
+                    {
+                        "id": "actreturn_11",
+                        "name": "Return (2)",
+                        "description": "Simple Return Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
+                            "input": {}
+                        }
                     }
                 ],
                 "links": [
@@ -154,21 +172,29 @@
                         "from": "gpio_4",
                         "to": "log_5",
                         "type": "expression",
-                        "value": "true"
+                        "value": "$activity[gpio_4].result==0"
                     },
                     {
                         "from": "log_5",
                         "to": "gpio_7"
                     },
                     {
+                        "from": "gpio_7",
+                        "to": "actreturn_10"
+                    },
+                    {
                         "from": "gpio_4",
                         "to": "log_6",
                         "type": "expression",
-                        "value": "false"
+                        "value": "$activity[gpio_4].result==1"
                     },
                     {
                         "from": "log_6",
                         "to": "gpio_8"
+                    },
+                    {
+                        "from": "gpio_8",
+                        "to": "actreturn_11"
                     }
                 ],
                 "errorHandler": {
