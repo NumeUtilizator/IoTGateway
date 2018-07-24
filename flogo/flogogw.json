@@ -150,7 +150,7 @@
                         "from": "gpio_4",
                         "to": "log_5",
                         "type": "expression",
-                        "value": "read-state.result==0"
+                        "value": "true"
                     },
                     {
                         "from": "log_5",
@@ -160,13 +160,30 @@
                         "from": "gpio_4",
                         "to": "log_6",
                         "type": "expression",
-                        "value": "read-state.result==1"
+                        "value": "false"
                     },
                     {
                         "from": "log_6",
                         "to": "gpio_8"
                     }
-                ]
+                ],
+                "errorHandler": {
+                    "tasks": [
+                        {
+                            "id": "log_9",
+                            "name": "Log Message",
+                            "description": "Simple Log Activity",
+                            "activity": {
+                                "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                                "input": {
+                                    "message": "error",
+                                    "flowInfo": "true",
+                                    "addToFlow": "true"
+                                }
+                            }
+                        }
+                    ]
+                }
             }
         }
     ]
