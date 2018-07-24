@@ -15,7 +15,7 @@
                 "id": "FLOGO_MQTT_CLIENT",
                 "user": "",
                 "password": "",
-                "store": "",
+                "store": ":memory:",
                 "topic": "vfdemo/Alexa",
                 "qos": 0,
                 "cleansess": false
