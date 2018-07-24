@@ -11,7 +11,7 @@
             "name": "Receive MQTT Message",
             "description": "Simple MQTT Trigger",
             "settings": {
-                "broker": "tcp://37.187.106.16:1883",
+                "broker": "tcp://127.0.0.1:1883",
                 "id": "Gateway IN",
                 "user": null,
                 "password": null,
