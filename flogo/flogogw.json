@@ -44,7 +44,7 @@
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
                             "input": {
-                                "message": "Recieved",
+                                "message": null,
                                 "flowInfo": "true",
                                 "addToFlow": "true"
                             }
