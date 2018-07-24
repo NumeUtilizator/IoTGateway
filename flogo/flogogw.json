@@ -6,20 +6,11 @@
     "description": "IoT gateway for Raspberry pi",
     "triggers": [
         {
-            "id": "receive_mqtt_message",
-            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/mqtt",
-            "name": "Receive MQTT Message",
-            "description": "Simple MQTT Trigger",
-            "settings": {
-                "broker": "tcp://127.0.0.1:1883",
-                "id": "Gateway IN",
-                "user": null,
-                "password": null,
-                "store": ":memory:",
-                "topic": "vfdemo/Alexa",
-                "qos": "0",
-                "cleansess": "true"
-            },
+            "id": "timer_1",
+            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/timer",
+            "name": "Timer (1)",
+            "description": "Simple Timer trigger",
+            "settings": {},
             "handlers": [
                 {
                     "action": {
@@ -29,7 +20,12 @@
                         }
                     },
                     "settings": {
-                        "topic": null
+                        "repeating": "true",
+                        "notImmediate": "false",
+                        "startDate": null,
+                        "hours": "",
+                        "minutes": "",
+                        "seconds": "2"
                     }
                 }
             ]
