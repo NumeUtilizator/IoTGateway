@@ -4,7 +4,7 @@ services:
     build: ./mqtt
     ports:
       - "1883:1883"
-      - "9001:9001"
+      - "443:9001"
     privileged: true
     network_mode: "host"
     restart: always
