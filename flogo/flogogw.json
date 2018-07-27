@@ -474,7 +474,7 @@
                         "from": "gpio_4",
                         "to": "log_6",
                         "type": "expression",
-                        "value": "$activity[gpio_2].result==1"
+                        "value": "$activity[gpio_4].result==1"
                     },
                     {
                         "from": "log_6",
