@@ -1,5 +1,5 @@
 {
-    "name": "AlexaGW",
+    "name": "GW",
     "type": "flogo:app",
     "version": "0.0.1",
     "appModel": "1.0.0",
@@ -25,7 +25,7 @@
                     "action": {
                         "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
                         "data": {
-                            "flowURI": "res://flow:control_gw_led"
+                            "flowURI": "res://flow:alexa_gw_gpio_led"
                         }
                     },
                     "settings": {
@@ -33,13 +33,36 @@
                     }
                 }
             ]
+        },
+        {
+            "id": "receive_http_message_2",
+            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/rest",
+            "name": "Receive HTTP Message (2)",
+            "description": "Simple REST Trigger",
+            "settings": {
+                "port": "9000"
+            },
+            "handlers": [
+                {
+                    "action": {
+                        "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
+                        "data": {
+                            "flowURI": "res://flow:cloud_gw"
+                        }
+                    },
+                    "settings": {
+                        "method": "GET",
+                        "path": "/test"
+                    }
+                }
+            ]
         }
     ],
     "resources": [
         {
-            "id": "flow:control_gw_led",
+            "id": "flow:alexa_gw_gpio_led",
             "data": {
-                "name": "Control GW LED",
+                "name": "Alexa-GW=GPIOLed",
                 "metadata": {
                     "output": [
                         {
@@ -135,7 +158,7 @@
                     },
                     {
                         "id": "actreturn_5",
-                        "name": "Return",
+                        "name": "Return on",
                         "description": "Simple Return Activity",
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
@@ -194,7 +217,7 @@
                     },
                     {
                         "id": "actreturn_6",
-                        "name": "Return (2)",
+                        "name": "Return off",
                         "description": "Simple Return Activity",
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
@@ -251,6 +274,72 @@
                     {
                         "from": "gpio_4",
                         "to": "actreturn_6"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "flow:gw_edge",
+            "data": {
+                "name": "GW-Edge",
+                "description": "GW to Edge device send distance factor",
+                "tasks": [
+                    {
+                        "id": "log_2",
+                        "name": "Log Message",
+                        "description": "Simple Log Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "input": {
+                                "message": "New correction for edge",
+                                "flowInfo": "true",
+                                "addToFlow": "true"
+                            }
+                        }
+                    },
+                    {
+                        "id": "mqtt_3",
+                        "name": "Send MQTT Message",
+                        "description": "Pubishes message on MQTT topic",
+                        "activity": {
+                            "ref": "github.com/jvanderl/flogo-components/activity/mqtt",
+                            "input": {
+                                "broker": "",
+                                "id": "",
+                                "user": "",
+                                "password": "",
+                                "topic": "",
+                                "qos": 0,
+                                "message": ""
+                            }
+                        }
+                    }
+                ],
+                "links": [
+                    {
+                        "from": "log_2",
+                        "to": "mqtt_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "flow:cloud_gw",
+            "data": {
+                "name": "Cloud-GW",
+                "tasks": [
+                    {
+                        "id": "log_2",
+                        "name": "Log Message",
+                        "description": "Simple Log Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "input": {
+                                "message": "rest ",
+                                "flowInfo": "true",
+                                "addToFlow": "true"
+                            }
+                        }
                     }
                 ]
             }
