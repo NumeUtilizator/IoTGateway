@@ -40,7 +40,7 @@
             "name": "Receive HTTP Message (2)",
             "description": "Simple REST Trigger",
             "settings": {
-                "port": "9000"
+                "port": "80"
             },
             "handlers": [
                 {
@@ -52,7 +52,7 @@
                     },
                     "settings": {
                         "method": "GET",
-                        "path": "/test"
+                        "path": "/hello/:name"
                     }
                 }
             ]
@@ -282,6 +282,20 @@
             "id": "flow:cloud_gw",
             "data": {
                 "name": "Cloud-GW",
+                "metadata": {
+                    "input": [
+                        {
+                            "name": "name",
+                            "type": "string"
+                        }
+                    ],
+                    "output": [
+                        {
+                            "name": "greeting",
+                            "type": "string"
+                        }
+                    ]
+                },
                 "tasks": [
                     {
                         "id": "log_2",
@@ -293,8 +307,40 @@
                                 "message": "rest ",
                                 "flowInfo": "true",
                                 "addToFlow": "true"
+                            },
+                            "mappings": {
+                                "input": [
+                                    {
+                                        "type": "assign",
+                                        "value": "$flow.name",
+                                        "mapTo": "message"
+                                    }
+                                ]
                             }
                         }
+                    },
+                    {
+                        "id": "actreply_3",
+                        "name": "Reply To Trigger",
+                        "description": "Simple Reply Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreply",
+                            "input": {
+                                "mappings": [
+                                    {
+                                        "mapTo": "greeting",
+                                        "type": "expression",
+                                        "value": "string.concat(\"Welcome, \", $flow.name, \". My name is GW!\")"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "links": [
+                    {
+                        "from": "log_2",
+                        "to": "actreply_3"
                     }
                 ]
             }
