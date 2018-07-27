@@ -279,51 +279,6 @@
             }
         },
         {
-            "id": "flow:gw_edge",
-            "data": {
-                "name": "GW-Edge",
-                "description": "GW to Edge device send distance factor",
-                "tasks": [
-                    {
-                        "id": "log_2",
-                        "name": "Log Message",
-                        "description": "Simple Log Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
-                            "input": {
-                                "message": "New correction for edge",
-                                "flowInfo": "true",
-                                "addToFlow": "true"
-                            }
-                        }
-                    },
-                    {
-                        "id": "mqtt_3",
-                        "name": "Send MQTT Message",
-                        "description": "Pubishes message on MQTT topic",
-                        "activity": {
-                            "ref": "github.com/jvanderl/flogo-components/activity/mqtt",
-                            "input": {
-                                "broker": "",
-                                "id": "",
-                                "user": "",
-                                "password": "",
-                                "topic": "",
-                                "qos": 0,
-                                "message": ""
-                            }
-                        }
-                    }
-                ],
-                "links": [
-                    {
-                        "from": "log_2",
-                        "to": "mqtt_3"
-                    }
-                ]
-            }
-        },
-        {
             "id": "flow:cloud_gw",
             "data": {
                 "name": "Cloud-GW",
