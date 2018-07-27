@@ -51,8 +51,8 @@
                         }
                     },
                     "settings": {
-                        "method": "GET",
-                        "path": "/hello/:name"
+                        "method": "POST",
+                        "path": "/lights/status"
                     }
                 }
             ]
@@ -283,15 +283,13 @@
             "data": {
                 "name": "Cloud-GW",
                 "metadata": {
-                    "input": [
-                        {
-                            "name": "name",
-                            "type": "string"
-                        }
-                    ],
                     "output": [
                         {
-                            "name": "greeting",
+                            "name": "code",
+                            "type": "integer"
+                        },
+                        {
+                            "name": "message",
                             "type": "string"
                         }
                     ]
@@ -304,15 +302,58 @@
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
                             "input": {
-                                "message": "rest ",
+                                "message": "Received request.",
                                 "flowInfo": "true",
                                 "addToFlow": "true"
+                            }
+                        }
+                    },
+                    {
+                        "id": "gpio_3",
+                        "name": "SetToOutput",
+                        "description": "Control raspberry gpio",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+                            "input": {
+                                "method": "Direction",
+                                "pinNumber": "23",
+                                "direction": "Output",
+                                "state": null,
+                                "Pull": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "gpio_4",
+                        "name": "GetStatus",
+                        "description": "Control raspberry gpio",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+                            "input": {
+                                "method": "Read State",
+                                "pinNumber": "23",
+                                "direction": "",
+                                "state": "",
+                                "Pull": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "log_5",
+                        "name": "SetToOnLog",
+                        "description": "Simple Log Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "input": {
+                                "message": "",
+                                "flowInfo": "false",
+                                "addToFlow": "false"
                             },
                             "mappings": {
                                 "input": [
                                     {
                                         "type": "assign",
-                                        "value": "$flow.name",
+                                        "value": "$activity[gpio_4].result",
                                         "mapTo": "message"
                                     }
                                 ]
@@ -320,17 +361,86 @@
                         }
                     },
                     {
-                        "id": "actreply_3",
-                        "name": "Reply To Trigger",
-                        "description": "Simple Reply Activity",
+                        "id": "gpio_7",
+                        "name": "SetToOn",
+                        "description": "Control raspberry gpio",
                         "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreply",
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+                            "input": {
+                                "method": "Set State",
+                                "pinNumber": "23",
+                                "direction": null,
+                                "state": "High",
+                                "Pull": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "actreturn_9",
+                        "name": "Return On",
+                        "description": "Simple Return Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
                             "input": {
                                 "mappings": [
                                     {
-                                        "mapTo": "greeting",
-                                        "type": "expression",
-                                        "value": "string.concat(\"Welcome, \", $flow.name, \". My name is GW!\")"
+                                        "mapTo": "code",
+                                        "type": "literal",
+                                        "value": 200
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "id": "log_6",
+                        "name": "SetToOffLog",
+                        "description": "Simple Log Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "input": {
+                                "message": "",
+                                "flowInfo": "false",
+                                "addToFlow": "false"
+                            },
+                            "mappings": {
+                                "input": [
+                                    {
+                                        "type": "assign",
+                                        "value": "$activity[gpio_4].result",
+                                        "mapTo": "message"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "id": "gpio_8",
+                        "name": "SetToOff",
+                        "description": "Control raspberry gpio",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+                            "input": {
+                                "method": "Set State",
+                                "pinNumber": "23",
+                                "direction": null,
+                                "state": "Low",
+                                "Pull": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "actreturn_10",
+                        "name": "Return Off",
+                        "description": "Simple Return Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
+                            "input": {
+                                "mappings": [
+                                    {
+                                        "mapTo": "code",
+                                        "type": "literal",
+                                        "value": 200
                                     }
                                 ]
                             }
@@ -340,7 +450,39 @@
                 "links": [
                     {
                         "from": "log_2",
-                        "to": "actreply_3"
+                        "to": "gpio_3"
+                    },
+                    {
+                        "from": "gpio_3",
+                        "to": "gpio_4"
+                    },
+                    {
+                        "from": "gpio_4",
+                        "to": "log_5",
+                        "type": "expression",
+                        "value": "$activity[gpio_4].result==0"
+                    },
+                    {
+                        "from": "log_5",
+                        "to": "gpio_7"
+                    },
+                    {
+                        "from": "gpio_7",
+                        "to": "actreturn_9"
+                    },
+                    {
+                        "from": "gpio_4",
+                        "to": "log_6",
+                        "type": "expression",
+                        "value": "$activity[gpio_2].result==1"
+                    },
+                    {
+                        "from": "log_6",
+                        "to": "gpio_8"
+                    },
+                    {
+                        "from": "gpio_8",
+                        "to": "actreturn_10"
                     }
                 ]
             }
