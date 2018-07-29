@@ -25,7 +25,7 @@
                     "action": {
                         "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
                         "data": {
-                            "flowURI": "res://flow:alexa_gw_gpio_led"
+                            "flowURI": "res://flow:thingworx_gw"
                         }
                     },
                     "settings": {
@@ -47,7 +47,7 @@
                     "action": {
                         "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
                         "data": {
-                            "flowURI": "res://flow:cloud_gw"
+                            "flowURI": "res://flow:alexa_gw_api_gpi_oled"
                         }
                     },
                     "settings": {
@@ -56,13 +56,65 @@
                     }
                 }
             ]
+        },
+        {
+            "id": "receive_mqtt_message_1",
+            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/mqtt",
+            "name": "Receive MQTT Message (1)",
+            "description": "Simple MQTT Trigger",
+            "settings": {
+                "broker": "tcp://127.0.0.1:1883",
+                "id": "GWmqtt",
+                "user": null,
+                "password": null,
+                "store": ":memory:",
+                "topic": "vfdemo/device/84:F3:EB:5A:42:24/device",
+                "qos": 0,
+                "cleansess": false
+            },
+            "handlers": [
+                {
+                    "action": {
+                        "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
+                        "data": {
+                            "flowURI": "res://flow:edge_gw_thingworx"
+                        }
+                    },
+                    "settings": {
+                        "topic": "vfdemo/device/84:F3:EB:5A:42:24/device"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "receive_http_message_3",
+            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/rest",
+            "name": "Receive HTTP Message (3)",
+            "description": "Simple REST Trigger",
+            "settings": {
+                "port": "80"
+            },
+            "handlers": [
+                {
+                    "action": {
+                        "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
+                        "data": {
+                            "flowURI": "res://flow:thingworx_gw_api"
+                        }
+                    },
+                    "settings": {
+                        "method": "POST",
+                        "path": "/device/distfactor"
+                    }
+                }
+            ]
         }
     ],
     "resources": [
         {
-            "id": "flow:alexa_gw_gpio_led",
+            "id": "flow:thingworx_gw",
             "data": {
-                "name": "Alexa-GW=GPIOLed",
+                "name": "Thingworx-GW",
                 "metadata": {
                     "output": [
                         {
@@ -279,9 +331,9 @@
             }
         },
         {
-            "id": "flow:cloud_gw",
+            "id": "flow:alexa_gw_api_gpi_oled",
             "data": {
-                "name": "Cloud-GW",
+                "name": "Alexa-GW-API=GPIOled",
                 "metadata": {
                     "output": [
                         {
@@ -483,6 +535,89 @@
                     {
                         "from": "gpio_8",
                         "to": "actreturn_10"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "flow:edge_gw_thingworx",
+            "data": {
+                "name": "Edge-GW-Thingworx",
+                "description": "Data from edge device",
+                "tasks": [
+                    {
+                        "id": "log_2",
+                        "name": "Log mqtt",
+                        "description": "Simple Log Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "input": {
+                                "message": "Received",
+                                "flowInfo": "true",
+                                "addToFlow": "true"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "flow:thingworx_gw_api",
+            "data": {
+                "name": "Thingworx-GW-api",
+                "tasks": [
+                    {
+                        "id": "combine_2",
+                        "name": "Combine",
+                        "description": "Combines separate parts into a single string",
+                        "activity": {
+                            "ref": "github.com/jvanderl/flogo-components/activity/combine",
+                            "input": {
+                                "delimiter": "/",
+                                "prefix": "device",
+                                "suffix": "",
+                                "part1": "84:F3:EB:5A:42:24",
+                                "part2": "",
+                                "part3": "",
+                                "part4": "",
+                                "part5": "",
+                                "part6": "",
+                                "part7": "",
+                                "part8": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "mqtt_3",
+                        "name": "Send MQTT Message",
+                        "description": "Pubishes message on MQTT topic",
+                        "activity": {
+                            "ref": "github.com/jvanderl/flogo-components/activity/mqtt",
+                            "input": {
+                                "broker": "tcp://127.0.0.1:1883",
+                                "id": "CentralToCar",
+                                "user": null,
+                                "password": "",
+                                "topic": "device/84:F3:EB:5A:42:24",
+                                "qos": "1",
+                                "message": ""
+                            },
+                            "mappings": {
+                                "input": [
+                                    {
+                                        "type": "assign",
+                                        "value": "$activity[combine_2].result",
+                                        "mapTo": "topic"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "links": [
+                    {
+                        "from": "combine_2",
+                        "to": "mqtt_3"
                     }
                 ]
             }
