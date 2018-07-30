@@ -12,7 +12,8 @@ WORKDIR $GOPATH/src/flogo-app
 
 COPY $FLOGO_APP_FILE ./
 
-RUN flogo create -f $FLOGO_APP_FILE
+RUN flogo create -flv github.com/TIBCOSoftware/flogo-contrib/action/flow@v0.5.5,github.com/TIBCOSoftware/flogo-lib/engine@v0.5.5 -f $FLOGO_APP_FILE
+#RUN flogo create -f $FLOGO_APP_FILE
 
 WORKDIR $GOPATH/src/flogo-app/$FLOGO_APP_NAME
 
