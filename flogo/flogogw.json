@@ -31,27 +31,6 @@
                         "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
                         "data": {
                             "flowURI": "res://flow:thingworx_gw_api"
-                        },
-                        "mappings": {
-                            "input": [
-                                {
-                                    "mapTo": "distfact",
-                                    "type": "assign",
-                                    "value": "$.pathParams.distfact"
-                                }
-                            ],
-                            "output": [
-                                {
-                                    "mapTo": "data",
-                                    "type": "assign",
-                                    "value": "$.result"
-                                },
-                                {
-                                    "mapTo": "code",
-                                    "type": "assign",
-                                    "value": "$.code"
-                                }
-                            ]
                         }
                     },
                     "settings": {
@@ -305,6 +284,7 @@
             "id": "flow:edge_gw_thingworx",
             "data": {
                 "name": "Edge-GW-Thingworx",
+                "description": "Data from edge device",
                 "tasks": [
                     {
                         "id": "log_2",
@@ -339,7 +319,7 @@
                             "type": "integer"
                         },
                         {
-                            "name": "result",
+                            "name": "message",
                             "type": "string"
                         }
                     ]
@@ -368,26 +348,22 @@
                         }
                     },
                     {
-                        "id": "mqtt_3",
-                        "name": "Send MQTT Message",
-                        "description": "Pubishes message on MQTT topic",
+                        "id": "actreturn_3",
+                        "name": "Return",
+                        "description": "Simple Return Activity",
                         "activity": {
-                            "ref": "github.com/jvanderl/flogo-components/activity/mqtt",
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
                             "input": {
-                                "broker": "tcp://127.0.0.1:1883",
-                                "id": "GwToEdge",
-                                "user": "",
-                                "password": "",
-                                "topic": "device/84:F3:EB:5A:42:24",
-                                "qos": "1",
-                                "message": null
-                            },
-                            "mappings": {
-                                "input": [
+                                "mappings": [
                                     {
+                                        "mapTo": "message",
                                         "type": "assign",
-                                        "value": "$flow.distfact",
-                                        "mapTo": "message"
+                                        "value": "$flow.distfact"
+                                    },
+                                    {
+                                        "mapTo": "code",
+                                        "type": "literal",
+                                        "value": 200
                                     }
                                 ]
                             }
@@ -397,7 +373,7 @@
                 "links": [
                     {
                         "from": "log_2",
-                        "to": "mqtt_3"
+                        "to": "actreturn_3"
                     }
                 ]
             }
