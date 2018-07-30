@@ -31,6 +31,27 @@
                         "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
                         "data": {
                             "flowURI": "res://flow:thingworx_gw_api"
+                        },
+                        "mappings": {
+                            "input": [
+                                {
+                                    "mapTo": "distfact",
+                                    "type": "assign",
+                                    "value": "$.pathParams.distfact"
+                                }
+                            ],
+                            "output": [
+                                {
+                                    "mapTo": "data",
+                                    "type": "assign",
+                                    "value": "$.result"
+                                },
+                                {
+                                    "mapTo": "code",
+                                    "type": "assign",
+                                    "value": "$.code"
+                                }
+                            ]
                         }
                     },
                     "settings": {
@@ -319,7 +340,7 @@
                             "type": "integer"
                         },
                         {
-                            "name": "message",
+                            "name": "result",
                             "type": "string"
                         }
                     ]
@@ -334,7 +355,7 @@
                             "input": {
                                 "message": null,
                                 "flowInfo": "true",
-                                "addToFlow": "false"
+                                "addToFlow": "true"
                             },
                             "mappings": {
                                 "input": [
@@ -356,14 +377,14 @@
                             "input": {
                                 "mappings": [
                                     {
-                                        "mapTo": "message",
-                                        "type": "assign",
-                                        "value": "$flow.distfact"
-                                    },
-                                    {
                                         "mapTo": "code",
                                         "type": "literal",
                                         "value": 200
+                                    },
+                                    {
+                                        "mapTo": "result",
+                                        "type": "assign",
+                                        "value": "$flow.distfact"
                                     }
                                 ]
                             }
