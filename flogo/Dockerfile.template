@@ -12,9 +12,10 @@ WORKDIR $GOPATH/src/flogo-app
 COPY $FLOGO_APP_FILE ./
 
 RUN flogo create -f $FLOGO_APP_FILE
-RUN flogo install github.com/jvanderl/flogo-components/activity/mqtt
 
 WORKDIR $GOPATH/src/flogo-app/$FLOGO_APP_NAME
+
+RUN flogo install github.com/jvanderl/flogo-components/activity/mqtt
 
 RUN flogo build -o -e
 
