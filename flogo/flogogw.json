@@ -317,6 +317,10 @@
                         {
                             "name": "code",
                             "type": "integer"
+                        },
+                        {
+                            "name": "message",
+                            "type": "string"
                         }
                     ]
                 },
@@ -328,9 +332,9 @@
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
                             "input": {
-                                "message": "recived $flow.distfact",
+                                "message": null,
                                 "flowInfo": "true",
-                                "addToFlow": "true"
+                                "addToFlow": "false"
                             },
                             "mappings": {
                                 "input": [
@@ -351,6 +355,11 @@
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
                             "input": {
                                 "mappings": [
+                                    {
+                                        "mapTo": "message",
+                                        "type": "assign",
+                                        "value": "$flow.distfact"
+                                    },
                                     {
                                         "mapTo": "code",
                                         "type": "literal",
