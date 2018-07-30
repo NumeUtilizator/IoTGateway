@@ -408,8 +408,8 @@
                                     },
                                     {
                                         "mapTo": "result",
-                                        "type": "assign",
-                                        "value": "$flow.result"
+                                        "type": "expression",
+                                        "value": "string.concat(\"The new distance factor is\", $flow.result)"
                                     }
                                 ]
                             }
