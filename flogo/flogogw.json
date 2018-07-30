@@ -6,9 +6,9 @@
     "description": "IoT gateway",
     "triggers": [
         {
-            "id": "receive_http_message_2",
+            "id": "receive_http_80",
             "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/rest",
-            "name": "Receive HTTP Message (2)",
+            "name": "Receive HTTP 80",
             "description": "Simple REST Trigger",
             "settings": {
                 "port": "80"
@@ -24,6 +24,18 @@
                     "settings": {
                         "method": "POST",
                         "path": "/lights/status"
+                    }
+                },
+                {
+                    "action": {
+                        "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
+                        "data": {
+                            "flowURI": "res://flow:thingworx_gw_api"
+                        }
+                    },
+                    "settings": {
+                        "method": "GET",
+                        "path": "/device/:distfact"
                     }
                 }
             ]
@@ -53,29 +65,6 @@
                     },
                     "settings": {
                         "topic": "vfdemo/device/84:F3:EB:5A:42:24/device"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "receive_http_message_4",
-            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/rest",
-            "name": "Receive HTTP Message (4)",
-            "description": "Simple REST Trigger",
-            "settings": {
-                "port": "80"
-            },
-            "handlers": [
-                {
-                    "action": {
-                        "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
-                        "data": {
-                            "flowURI": "res://flow:thingworx_gw_api"
-                        }
-                    },
-                    "settings": {
-                        "method": "GET",
-                        "path": "/device/:distfact"
                     }
                 }
             ]
