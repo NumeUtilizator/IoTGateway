@@ -48,8 +48,8 @@
             "settings": {
                 "broker": "tcp://127.0.0.1:1883",
                 "id": "GWmqtt",
-                "user": null,
-                "password": null,
+                "user": "",
+                "password": "",
                 "store": ":memory:",
                 "topic": "vfdemo/device/84:F3:EB:5A:42:24/device",
                 "qos": 0,
@@ -310,13 +310,7 @@
                     "input": [
                         {
                             "name": "distfact",
-                            "type": "integer"
-                        }
-                    ],
-                    "output": [
-                        {
-                            "name": "result",
-                            "type": "integer"
+                            "type": "string"
                         }
                     ]
                 },
@@ -329,8 +323,8 @@
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
                             "input": {
                                 "message": "Logged ",
-                                "flowInfo": "true",
-                                "addToFlow": "true"
+                                "flowInfo": "false",
+                                "addToFlow": "false"
                             },
                             "mappings": {
                                 "input": [
@@ -344,27 +338,49 @@
                         }
                     },
                     {
-                        "id": "actreturn_3",
+                        "id": "mqtt_3",
+                        "name": "Send MQTT Message",
+                        "description": "Pubishes message on MQTT topic",
+                        "activity": {
+                            "ref": "github.com/jvanderl/flogo-components/activity/mqtt",
+                            "input": {
+                                "broker": "tcp://127.0.0.1:1883",
+                                "id": "GwToEdge",
+                                "user": "",
+                                "password": "",
+                                "topic": "device/84:F3:EB:5A:42:24/",
+                                "qos": "1",
+                                "message": null
+                            },
+                            "mappings": {
+                                "input": [
+                                    {
+                                        "type": "assign",
+                                        "value": "$flow.distfact",
+                                        "mapTo": "message"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "id": "actreturn_4",
                         "name": "Return",
                         "description": "Simple Return Activity",
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
-                            "input": {
-                                "mappings": [
-                                    {
-                                        "mapTo": "result",
-                                        "type": "assign",
-                                        "value": "$flow.distfact"
-                                    }
-                                ]
-                            }
+                            "input": {}
                         }
                     }
                 ],
                 "links": [
                     {
                         "from": "log_2",
-                        "to": "actreturn_3"
+                        "to": "mqtt_3"
+                    },
+                    {
+                        "from": "mqtt_3",
+                        "to": "actreturn_4"
                     }
                 ]
             }
