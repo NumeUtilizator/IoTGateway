@@ -7,7 +7,7 @@ services:
     privileged: true
     network_mode: "host"
     restart: always
-  flogo:
+  flogogw:
     build: ./flogo
     network_mode: "host"
     privileged: true
