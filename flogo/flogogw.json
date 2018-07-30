@@ -312,31 +312,15 @@
                             "name": "distfact",
                             "type": "string"
                         }
+                    ],
+                    "output": [
+                        {
+                            "name": "code",
+                            "type": "integer"
+                        }
                     ]
                 },
                 "tasks": [
-                    {
-                        "id": "log_2",
-                        "name": "Log Message",
-                        "description": "Simple Log Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
-                            "input": {
-                                "message": "Logged ",
-                                "flowInfo": "false",
-                                "addToFlow": "false"
-                            },
-                            "mappings": {
-                                "input": [
-                                    {
-                                        "type": "assign",
-                                        "value": "$flow.distfact",
-                                        "mapTo": "message"
-                                    }
-                                ]
-                            }
-                        }
-                    },
                     {
                         "id": "mqtt_3",
                         "name": "Send MQTT Message",
@@ -362,12 +346,29 @@
                                 ]
                             }
                         }
+                    },
+                    {
+                        "id": "actreturn_4",
+                        "name": "Return",
+                        "description": "Simple Return Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
+                            "input": {
+                                "mappings": [
+                                    {
+                                        "mapTo": "code",
+                                        "type": "literal",
+                                        "value": 200
+                                    }
+                                ]
+                            }
+                        }
                     }
                 ],
                 "links": [
                     {
-                        "from": "log_2",
-                        "to": "mqtt_3"
+                        "from": "mqtt_3",
+                        "to": "actreturn_4"
                     }
                 ]
             }
