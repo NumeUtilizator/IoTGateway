@@ -392,12 +392,38 @@
                                 ]
                             }
                         }
+                    },
+                    {
+                        "id": "actreturn_4",
+                        "name": "Return",
+                        "description": "Simple Return Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
+                            "input": {
+                                "mappings": [
+                                    {
+                                        "mapTo": "code",
+                                        "type": "literal",
+                                        "value": 200
+                                    },
+                                    {
+                                        "mapTo": "result",
+                                        "type": "assign",
+                                        "value": "$flow.result"
+                                    }
+                                ]
+                            }
+                        }
                     }
                 ],
                 "links": [
                     {
                         "from": "log_2",
                         "to": "mqtt_3"
+                    },
+                    {
+                        "from": "mqtt_3",
+                        "to": "actreturn_4"
                     }
                 ]
             }
