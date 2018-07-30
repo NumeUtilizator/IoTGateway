@@ -322,19 +322,15 @@
                 },
                 "tasks": [
                     {
-                        "id": "mqtt_3",
-                        "name": "Send MQTT Message",
-                        "description": "Pubishes message on MQTT topic",
+                        "id": "log_2",
+                        "name": "Log Message",
+                        "description": "Simple Log Activity",
                         "activity": {
-                            "ref": "github.com/jvanderl/flogo-components/activity/mqtt",
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
                             "input": {
-                                "broker": "tcp://127.0.0.1:1883",
-                                "id": "GwToEdge",
-                                "user": "",
-                                "password": "",
-                                "topic": "device/84:F3:EB:5A:42:24",
-                                "qos": "1",
-                                "message": null
+                                "message": "recived $flow.distfact",
+                                "flowInfo": "true",
+                                "addToFlow": "true"
                             },
                             "mappings": {
                                 "input": [
@@ -348,7 +344,7 @@
                         }
                     },
                     {
-                        "id": "actreturn_4",
+                        "id": "actreturn_3",
                         "name": "Return",
                         "description": "Simple Return Activity",
                         "activity": {
@@ -367,8 +363,8 @@
                 ],
                 "links": [
                     {
-                        "from": "mqtt_3",
-                        "to": "actreturn_4"
+                        "from": "log_2",
+                        "to": "actreturn_3"
                     }
                 ]
             }
