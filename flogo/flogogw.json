@@ -305,7 +305,6 @@
             "id": "flow:edge_gw_thingworx",
             "data": {
                 "name": "Edge-GW-Thingworx",
-                "description": "Data from edge device",
                 "tasks": [
                     {
                         "id": "log_2",
