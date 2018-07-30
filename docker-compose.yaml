@@ -7,10 +7,3 @@ services:
     privileged: true
     network_mode: "host"
     restart: always
-  flogogw:
-    build: ./flogo
-    network_mode: "host"
-    privileged: true
-    restart: always
-    depends_on: 
-      - mqtt
