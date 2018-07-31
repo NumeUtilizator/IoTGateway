@@ -62,9 +62,9 @@
             ]
         },
         {
-            "id": "receive_mqtt_message_1",
+            "id": "mqtt_broker",
             "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/mqtt",
-            "name": "Receive MQTT Message (1)",
+            "name": "MQTT Broker",
             "description": "Simple MQTT Trigger",
             "settings": {
                 "broker": "tcp://127.0.0.1:1883",
@@ -86,7 +86,7 @@
                         "mappings": {
                             "input": [
                                 {
-                                    "mapTo": "mes",
+                                    "mapTo": "message",
                                     "type": "assign",
                                     "value": "$trigger.message"
                                 }
@@ -317,15 +317,25 @@
                 "metadata": {
                     "input": [
                         {
-                            "name": "mes",
+                            "name": "message",
                             "type": "string"
+                        }
+                    ],
+                    "output": [
+                        {
+                            "name": "result",
+                            "type": "string"
+                        },
+                        {
+                            "name": "status",
+                            "type": "integer"
                         }
                     ]
                 },
                 "tasks": [
                     {
                         "id": "rest_2",
-                        "name": "Invoke REST Service",
+                        "name": "&#160;REST Thingworx",
                         "description": "Simple REST Activity",
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/rest",
@@ -348,12 +358,40 @@
                                 "input": [
                                     {
                                         "type": "assign",
-                                        "value": "$flow.mes",
+                                        "value": "$flow.message",
                                         "mapTo": "content"
                                     }
                                 ]
                             }
                         }
+                    },
+                    {
+                        "id": "actreturn_3",
+                        "name": "Return",
+                        "description": "Simple Return Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
+                            "input": {
+                                "mappings": [
+                                    {
+                                        "mapTo": "result",
+                                        "type": "assign",
+                                        "value": "$activity[rest_2].result"
+                                    },
+                                    {
+                                        "mapTo": "status",
+                                        "type": "assign",
+                                        "value": "$activity[rest_2].status"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "links": [
+                    {
+                        "from": "rest_2",
+                        "to": "actreturn_3"
                     }
                 ]
             }
@@ -405,8 +443,8 @@
                     },
                     {
                         "id": "mqtt_3",
-                        "name": "Send MQTT Message",
-                        "description": "Pubishes message on MQTT topic",
+                        "name": "Send MQTT to Edge",
+                        "description": "Pubishes message on MQTT topic for the edge device",
                         "activity": {
                             "ref": "github.com/jvanderl/flogo-components/activity/mqtt",
                             "input": {
