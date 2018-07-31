@@ -82,6 +82,15 @@
                         "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
                         "data": {
                             "flowURI": "res://flow:edge_gw_thingworx"
+                        },
+                        "mappings": {
+                            "input": [
+                                {
+                                    "mapTo": "mes",
+                                    "type": "assign",
+                                    "value": "$.message"
+                                }
+                            ]
                         }
                     },
                     "settings": {
@@ -305,6 +314,14 @@
             "id": "flow:edge_gw_thingworx",
             "data": {
                 "name": "Edge-GW-Thingworx",
+                "metadata": {
+                    "input": [
+                        {
+                            "name": "mes",
+                            "type": "string"
+                        }
+                    ]
+                },
                 "tasks": [
                     {
                         "id": "log_2",
@@ -316,6 +333,15 @@
                                 "message": "Received",
                                 "flowInfo": "true",
                                 "addToFlow": "true"
+                            },
+                            "mappings": {
+                                "input": [
+                                    {
+                                        "type": "assign",
+                                        "value": "$flow.mes",
+                                        "mapTo": "message"
+                                    }
+                                ]
                             }
                         }
                     }
