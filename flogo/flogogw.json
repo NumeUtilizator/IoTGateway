@@ -88,7 +88,7 @@
                                 {
                                     "mapTo": "mes",
                                     "type": "assign",
-                                    "value": "$.message"
+                                    "value": "$trigger.message"
                                 }
                             ]
                         }
@@ -324,22 +324,32 @@
                 },
                 "tasks": [
                     {
-                        "id": "log_2",
-                        "name": "Log mqtt",
-                        "description": "Simple Log Activity",
+                        "id": "rest_2",
+                        "name": "Invoke REST Service",
+                        "description": "Simple REST Activity",
                         "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/rest",
                             "input": {
-                                "message": "Received",
-                                "flowInfo": "true",
-                                "addToFlow": "true"
+                                "method": "PUT",
+                                "uri": "https://pp-1807281427ai.devportal.ptc.io/Thingworx/Things/CarThing/Properties/*",
+                                "proxy": null,
+                                "pathParams": null,
+                                "queryParams": null,
+                                "header": {
+                                    "appkey": "835e9906-2a70-4d54-9683-c9d8ded783fc",
+                                    "content-type": "application/json",
+                                    "cache-control": "no-cache",
+                                    "postman-token": "ef7cda6b-56b1-1f85-6cd6-b77786cb038e"
+                                },
+                                "skipSsl": "false",
+                                "content": null
                             },
                             "mappings": {
                                 "input": [
                                     {
                                         "type": "assign",
                                         "value": "$flow.mes",
-                                        "mapTo": "message"
+                                        "mapTo": "content"
                                     }
                                 ]
                             }

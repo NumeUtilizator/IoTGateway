@@ -18,7 +18,7 @@ RUN flogo create -flv github.com/TIBCOSoftware/flogo-contrib/action/flow@v0.5.5,
 WORKDIR $GOPATH/src/flogo-app/$FLOGO_APP_NAME
 
 #RUN flogo install github.com/jvanderl/flogo-components/activity/mqtt
-RUN flogo ensure
+#RUN flogo ensure
 
 RUN flogo build -o -e
 
