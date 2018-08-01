@@ -326,28 +326,6 @@
                 },
                 "tasks": [
                     {
-                        "id": "log_4",
-                        "name": "Log Message",
-                        "description": "Simple Log Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
-                            "input": {
-                                "message": "",
-                                "flowInfo": "true",
-                                "addToFlow": "false"
-                            },
-                            "mappings": {
-                                "input": [
-                                    {
-                                        "type": "assign",
-                                        "value": "$flow.mes",
-                                        "mapTo": "message"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
                         "id": "rest_5",
                         "name": "Invoke REST Service (2)",
                         "description": "Simple REST Activity",
@@ -377,12 +355,6 @@
                                 ]
                             }
                         }
-                    }
-                ],
-                "links": [
-                    {
-                        "from": "log_4",
-                        "to": "rest_5"
                     }
                 ]
             }
