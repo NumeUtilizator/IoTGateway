@@ -324,8 +324,30 @@
                 },
                 "tasks": [
                     {
-                        "id": "rest_2",
-                        "name": "REST Thingworx",
+                        "id": "log_2",
+                        "name": "Log Message",
+                        "description": "Simple Log Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "input": {
+                                "message": null,
+                                "flowInfo": "true",
+                                "addToFlow": "true"
+                            },
+                            "mappings": {
+                                "input": [
+                                    {
+                                        "type": "assign",
+                                        "value": "$flow.mes",
+                                        "mapTo": "message"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "id": "rest_3",
+                        "name": "Invoke REST Service",
                         "description": "Simple REST Activity",
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/rest",
@@ -354,6 +376,12 @@
                                 ]
                             }
                         }
+                    }
+                ],
+                "links": [
+                    {
+                        "from": "log_2",
+                        "to": "rest_3"
                     }
                 ]
             }
