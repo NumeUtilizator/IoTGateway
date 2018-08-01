@@ -72,7 +72,7 @@
                 "user": "",
                 "password": "",
                 "store": ":memory:",
-                "topic": "vfdemo/device/84:F3:EB:5A:42:24/device",
+                "topic": "vfdemo/device/84:F3:EB:5A:42:24/#",
                 "qos": 0,
                 "cleansess": false
             },
@@ -94,7 +94,7 @@
                         }
                     },
                     "settings": {
-                        "topic": "vfdemo/device/84:F3:EB:5A:42:24/device"
+                        "topic": "vfdemo/device/84:F3:EB:5A:42:24/#"
                     }
                 }
             ]
