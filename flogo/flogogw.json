@@ -18,7 +18,7 @@
                     "action": {
                         "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
                         "data": {
-                            "flowURI": "res://flow:alexa_gw_api_gpi_oled"
+                            "flowURI": "res://flow:alexa_gw"
                         }
                     },
                     "settings": {
@@ -30,7 +30,7 @@
                     "action": {
                         "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
                         "data": {
-                            "flowURI": "res://flow:thingworx_gw_api"
+                            "flowURI": "res://flow:thingworx_gw_edge"
                         },
                         "mappings": {
                             "input": [
@@ -102,9 +102,10 @@
     ],
     "resources": [
         {
-            "id": "flow:alexa_gw_api_gpi_oled",
+            "id": "flow:alexa_gw",
             "data": {
-                "name": "Alexa-GW-API=GPIOled",
+                "name": "Alexa-GW",
+                "description": "Alexa to GW rest api to toggle GPIO led.",
                 "metadata": {
                     "output": [
                         {
@@ -200,7 +201,7 @@
                     },
                     {
                         "id": "actreturn_9",
-                        "name": "Return On",
+                        "name": "ReturnOn",
                         "description": "Simple Return Activity",
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
@@ -254,7 +255,7 @@
                     },
                     {
                         "id": "actreturn_10",
-                        "name": "Return Off",
+                        "name": "ReturnOff",
                         "description": "Simple Return Activity",
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
@@ -314,6 +315,7 @@
             "id": "flow:edge_gw_thingworx",
             "data": {
                 "name": "Edge-GW-Thingworx",
+                "description": "Gateway is mqtt broker that sends Edge device data to Thingworx.",
                 "metadata": {
                     "input": [
                         {
@@ -324,8 +326,30 @@
                 },
                 "tasks": [
                     {
-                        "id": "rest_3",
-                        "name": "Invoke REST Service",
+                        "id": "log_4",
+                        "name": "Log Message",
+                        "description": "Simple Log Activity",
+                        "activity": {
+                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+                            "input": {
+                                "message": "",
+                                "flowInfo": "true",
+                                "addToFlow": "false"
+                            },
+                            "mappings": {
+                                "input": [
+                                    {
+                                        "type": "assign",
+                                        "value": "$flow.mes",
+                                        "mapTo": "message"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "id": "rest_5",
+                        "name": "Invoke REST Service (2)",
                         "description": "Simple REST Activity",
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/rest",
@@ -354,13 +378,20 @@
                             }
                         }
                     }
+                ],
+                "links": [
+                    {
+                        "from": "log_4",
+                        "to": "rest_5"
+                    }
                 ]
             }
         },
         {
-            "id": "flow:thingworx_gw_api",
+            "id": "flow:thingworx_gw_edge",
             "data": {
-                "name": "Thingworx-GW-api",
+                "name": "Thingworx-GW-Edge",
+                "description": "Thingworx controls the device via rest api that is send via mqtt broker to Edge.",
                 "metadata": {
                     "input": [
                         {
