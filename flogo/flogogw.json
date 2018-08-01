@@ -327,12 +327,6 @@
                             "name": "mes",
                             "type": "string"
                         }
-                    ],
-                    "output": [
-                        {
-                            "name": "json",
-                            "type": "string"
-                        }
                     ]
                 },
                 "tasks": [
