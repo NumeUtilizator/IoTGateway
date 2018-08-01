@@ -1,496 +1,509 @@
 {
-    "name": "GW",
-    "type": "flogo:app",
-    "version": "0.0.1",
-    "appModel": "1.0.0",
-    "description": "IoT gateway",
-    "triggers": [
+  "name": "GW",
+  "type": "flogo:app",
+  "version": "0.0.1",
+  "appModel": "1.0.0",
+  "description": "IoT gateway",
+  "triggers": [
+    {
+      "id": "receive_http_80",
+      "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/rest",
+      "name": "Receive HTTP 80",
+      "description": "Simple REST Trigger",
+      "settings": {
+        "port": "80"
+      },
+      "handlers": [
         {
-            "id": "receive_http_80",
-            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/rest",
-            "name": "Receive HTTP 80",
-            "description": "Simple REST Trigger",
-            "settings": {
-                "port": "80"
-            },
-            "handlers": [
-                {
-                    "action": {
-                        "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
-                        "data": {
-                            "flowURI": "res://flow:alexa_gw_api_gpi_oled"
-                        }
-                    },
-                    "settings": {
-                        "method": "POST",
-                        "path": "/lights/status"
-                    }
-                },
-                {
-                    "action": {
-                        "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
-                        "data": {
-                            "flowURI": "res://flow:thingworx_gw_api"
-                        },
-                        "mappings": {
-                            "input": [
-                                {
-                                    "mapTo": "distfact",
-                                    "type": "assign",
-                                    "value": "$.pathParams.distfact"
-                                }
-                            ],
-                            "output": [
-                                {
-                                    "mapTo": "data",
-                                    "type": "assign",
-                                    "value": "$.result"
-                                },
-                                {
-                                    "mapTo": "code",
-                                    "type": "assign",
-                                    "value": "$.code"
-                                }
-                            ]
-                        }
-                    },
-                    "settings": {
-                        "method": "GET",
-                        "path": "/device/:distfact"
-                    }
-                }
-            ]
+          "action": {
+            "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
+            "data": {
+              "flowURI": "res://flow:alexa_gw_api_gpi_oled"
+            }
+          },
+          "settings": {
+            "method": "POST",
+            "path": "/lights/status"
+          }
         },
         {
-            "id": "mqtt_broker",
-            "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/mqtt",
-            "name": "MQTT Broker",
-            "description": "Simple MQTT Trigger",
-            "settings": {
+          "action": {
+            "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
+            "data": {
+              "flowURI": "res://flow:thingworx_gw_api"
+            },
+            "mappings": {
+              "input": [
+                {
+                  "mapTo": "distfact",
+                  "type": "assign",
+                  "value": "$.pathParams.distfact"
+                }
+              ],
+              "output": [
+                {
+                  "mapTo": "data",
+                  "type": "assign",
+                  "value": "$.result"
+                },
+                {
+                  "mapTo": "code",
+                  "type": "assign",
+                  "value": "$.code"
+                }
+              ]
+            }
+          },
+          "settings": {
+            "method": "GET",
+            "path": "/device/:distfact"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mqtt_broker",
+      "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/mqtt",
+      "name": "MQTT Broker",
+      "description": "Simple MQTT Trigger",
+      "settings": {
+        "broker": "tcp://127.0.0.1:1883",
+        "id": "GWmqtt",
+        "user": "",
+        "password": "",
+        "store": ":memory:",
+        "topic": "vfdemo/device/84:F3:EB:5A:42:24/device",
+        "qos": 0,
+        "cleansess": false
+      },
+      "handlers": [
+        {
+          "action": {
+            "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
+            "data": {
+              "flowURI": "res://flow:edge_gw_thingworx"
+            },
+            "mappings": {
+              "input": [
+                {
+                  "mapTo": "mes",
+                  "type": "assign",
+                  "value": "$.message"
+                }
+              ],
+              "output": [
+                {
+                  "mapTo": "data",
+                  "type": "assign",
+                  "value": "$.json"
+                }
+              ]
+            }
+          },
+          "settings": {
+            "topic": "vfdemo/device/84:F3:EB:5A:42:24/device"
+          }
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:alexa_gw_api_gpi_oled",
+      "data": {
+        "name": "Alexa-GW-API=GPIOled",
+        "metadata": {
+          "output": [
+            {
+              "name": "code",
+              "type": "integer"
+            },
+            {
+              "name": "message",
+              "type": "string"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "id": "log_2",
+            "name": "Log Message",
+            "description": "Simple Log Activity",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+              "input": {
+                "message": "Received request.",
+                "flowInfo": "true",
+                "addToFlow": "true"
+              }
+            }
+          },
+          {
+            "id": "gpio_3",
+            "name": "SetToOutput",
+            "description": "Control raspberry gpio",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+              "input": {
+                "method": "Direction",
+                "pinNumber": "23",
+                "direction": "Output",
+                "state": null,
+                "Pull": ""
+              }
+            }
+          },
+          {
+            "id": "gpio_4",
+            "name": "GetStatus",
+            "description": "Control raspberry gpio",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+              "input": {
+                "method": "Read State",
+                "pinNumber": "23",
+                "direction": "",
+                "state": "",
+                "Pull": ""
+              }
+            }
+          },
+          {
+            "id": "log_5",
+            "name": "SetToOnLog",
+            "description": "Simple Log Activity",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+              "input": {
+                "message": "",
+                "flowInfo": "false",
+                "addToFlow": "false"
+              },
+              "mappings": {
+                "input": [
+                  {
+                    "type": "assign",
+                    "value": "$activity[gpio_4].result",
+                    "mapTo": "message"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "gpio_7",
+            "name": "SetToOn",
+            "description": "Control raspberry gpio",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+              "input": {
+                "method": "Set State",
+                "pinNumber": "23",
+                "direction": null,
+                "state": "High",
+                "Pull": ""
+              }
+            }
+          },
+          {
+            "id": "actreturn_9",
+            "name": "Return On",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
+              "input": {
+                "mappings": [
+                  {
+                    "mapTo": "code",
+                    "type": "literal",
+                    "value": 200
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "log_6",
+            "name": "SetToOffLog",
+            "description": "Simple Log Activity",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+              "input": {
+                "message": "",
+                "flowInfo": "false",
+                "addToFlow": "false"
+              },
+              "mappings": {
+                "input": [
+                  {
+                    "type": "assign",
+                    "value": "$activity[gpio_4].result",
+                    "mapTo": "message"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "gpio_8",
+            "name": "SetToOff",
+            "description": "Control raspberry gpio",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
+              "input": {
+                "method": "Set State",
+                "pinNumber": "23",
+                "direction": null,
+                "state": "Low",
+                "Pull": ""
+              }
+            }
+          },
+          {
+            "id": "actreturn_10",
+            "name": "Return Off",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
+              "input": {
+                "mappings": [
+                  {
+                    "mapTo": "code",
+                    "type": "literal",
+                    "value": 200
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "links": [
+          {
+            "from": "log_2",
+            "to": "gpio_3"
+          },
+          {
+            "from": "gpio_3",
+            "to": "gpio_4"
+          },
+          {
+            "from": "gpio_4",
+            "to": "log_5",
+            "type": "expression",
+            "value": "$activity[gpio_4].result==0"
+          },
+          {
+            "from": "log_5",
+            "to": "gpio_7"
+          },
+          {
+            "from": "gpio_7",
+            "to": "actreturn_9"
+          },
+          {
+            "from": "gpio_4",
+            "to": "log_6",
+            "type": "expression",
+            "value": "$activity[gpio_4].result==1"
+          },
+          {
+            "from": "log_6",
+            "to": "gpio_8"
+          },
+          {
+            "from": "gpio_8",
+            "to": "actreturn_10"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow:edge_gw_thingworx",
+      "data": {
+        "name": "Edge-GW-Thingworx",
+        "metadata": {
+          "input": [
+            {
+              "name": "mes",
+              "type": "string"
+            }
+          ],
+          "output": [
+            {
+              "name": "json",
+              "type": "string"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "id": "log_2",
+            "name": "Log Message",
+            "description": "Simple Log Activity",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+              "input": {
+                "message": null,
+                "flowInfo": "true",
+                "addToFlow": "false"
+              },
+              "mappings": {
+                "input": [
+                  {
+                    "type": "assign",
+                    "value": "$flow.mes",
+                    "mapTo": "message"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "rest_3",
+            "name": "Invoke REST Service",
+            "description": "Simple REST Activity",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/rest",
+              "input": {
+                "method": "PUT",
+                "uri": "https://pp-1807281427ai.devportal.ptc.io/Thingworx/Things/CarThing/Properties/*",
+                "proxy": "",
+                "pathParams": null,
+                "queryParams": null,
+                "header": {
+                  "appkey": "835e9906-2a70-4d54-9683-c9d8ded783fc",
+                  "content-type": "application/json",
+                  "cache-control": "no-cache",
+                  "postman-token": "ef7cda6b-56b1-1f85-6cd6-b77786cb038e"
+                },
+                "skipSsl": "false",
+                "content": null
+              },
+              "mappings": {
+                "input": [
+                  {
+                    "type": "assign",
+                    "value": "$flow.mes",
+                    "mapTo": "content"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "links": [
+          {
+            "from": "log_2",
+            "to": "rest_3"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow:thingworx_gw_api",
+      "data": {
+        "name": "Thingworx-GW-api",
+        "metadata": {
+          "input": [
+            {
+              "name": "distfact",
+              "type": "string"
+            }
+          ],
+          "output": [
+            {
+              "name": "code",
+              "type": "integer"
+            },
+            {
+              "name": "result",
+              "type": "string"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "id": "log_2",
+            "name": "Log Message",
+            "description": "Simple Log Activity",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
+              "input": {
+                "message": null,
+                "flowInfo": "true",
+                "addToFlow": "true"
+              },
+              "mappings": {
+                "input": [
+                  {
+                    "type": "assign",
+                    "value": "$flow.distfact",
+                    "mapTo": "message"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "mqtt_3",
+            "name": "Send MQTT to Edge",
+            "description": "Pubishes message on MQTT topic for the edge device",
+            "activity": {
+              "ref": "github.com/jvanderl/flogo-components/activity/mqtt",
+              "input": {
                 "broker": "tcp://127.0.0.1:1883",
-                "id": "GWmqtt",
+                "id": "GwToEdge",
                 "user": "",
                 "password": "",
-                "store": ":memory:",
-                "topic": "vfdemo/device/84:F3:EB:5A:42:24/device",
-                "qos": 0,
-                "cleansess": false
-            },
-            "handlers": [
-                {
-                    "action": {
-                        "ref": "github.com/TIBCOSoftware/flogo-contrib/action/flow",
-                        "data": {
-                            "flowURI": "res://flow:edge_gw_thingworx"
-                        },
-                        "mappings": {
-                            "input": [
-                                {
-                                    "mapTo": "mes",
-                                    "type": "assign",
-                                    "value": "$.message.mes"
-                                }
-                            ]
-                        }
-                    },
-                    "settings": {
-                        "topic": "vfdemo/device/84:F3:EB:5A:42:24/device"
-                    }
-                }
-            ]
-        }
-    ],
-    "resources": [
-        {
-            "id": "flow:alexa_gw_api_gpi_oled",
-            "data": {
-                "name": "Alexa-GW-API=GPIOled",
-                "metadata": {
-                    "output": [
-                        {
-                            "name": "code",
-                            "type": "integer"
-                        },
-                        {
-                            "name": "message",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "tasks": [
-                    {
-                        "id": "log_2",
-                        "name": "Log Message",
-                        "description": "Simple Log Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
-                            "input": {
-                                "message": "Received request.",
-                                "flowInfo": "true",
-                                "addToFlow": "true"
-                            }
-                        }
-                    },
-                    {
-                        "id": "gpio_3",
-                        "name": "SetToOutput",
-                        "description": "Control raspberry gpio",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
-                            "input": {
-                                "method": "Direction",
-                                "pinNumber": "23",
-                                "direction": "Output",
-                                "state": null,
-                                "Pull": ""
-                            }
-                        }
-                    },
-                    {
-                        "id": "gpio_4",
-                        "name": "GetStatus",
-                        "description": "Control raspberry gpio",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
-                            "input": {
-                                "method": "Read State",
-                                "pinNumber": "23",
-                                "direction": "",
-                                "state": "",
-                                "Pull": ""
-                            }
-                        }
-                    },
-                    {
-                        "id": "log_5",
-                        "name": "SetToOnLog",
-                        "description": "Simple Log Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
-                            "input": {
-                                "message": "",
-                                "flowInfo": "false",
-                                "addToFlow": "false"
-                            },
-                            "mappings": {
-                                "input": [
-                                    {
-                                        "type": "assign",
-                                        "value": "$activity[gpio_4].result",
-                                        "mapTo": "message"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "id": "gpio_7",
-                        "name": "SetToOn",
-                        "description": "Control raspberry gpio",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
-                            "input": {
-                                "method": "Set State",
-                                "pinNumber": "23",
-                                "direction": null,
-                                "state": "High",
-                                "Pull": ""
-                            }
-                        }
-                    },
-                    {
-                        "id": "actreturn_9",
-                        "name": "Return On",
-                        "description": "Simple Return Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
-                            "input": {
-                                "mappings": [
-                                    {
-                                        "mapTo": "code",
-                                        "type": "literal",
-                                        "value": 200
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "id": "log_6",
-                        "name": "SetToOffLog",
-                        "description": "Simple Log Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
-                            "input": {
-                                "message": "",
-                                "flowInfo": "false",
-                                "addToFlow": "false"
-                            },
-                            "mappings": {
-                                "input": [
-                                    {
-                                        "type": "assign",
-                                        "value": "$activity[gpio_4].result",
-                                        "mapTo": "message"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "id": "gpio_8",
-                        "name": "SetToOff",
-                        "description": "Control raspberry gpio",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/gpio",
-                            "input": {
-                                "method": "Set State",
-                                "pinNumber": "23",
-                                "direction": null,
-                                "state": "Low",
-                                "Pull": ""
-                            }
-                        }
-                    },
-                    {
-                        "id": "actreturn_10",
-                        "name": "Return Off",
-                        "description": "Simple Return Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
-                            "input": {
-                                "mappings": [
-                                    {
-                                        "mapTo": "code",
-                                        "type": "literal",
-                                        "value": 200
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                "links": [
-                    {
-                        "from": "log_2",
-                        "to": "gpio_3"
-                    },
-                    {
-                        "from": "gpio_3",
-                        "to": "gpio_4"
-                    },
-                    {
-                        "from": "gpio_4",
-                        "to": "log_5",
-                        "type": "expression",
-                        "value": "$activity[gpio_4].result==0"
-                    },
-                    {
-                        "from": "log_5",
-                        "to": "gpio_7"
-                    },
-                    {
-                        "from": "gpio_7",
-                        "to": "actreturn_9"
-                    },
-                    {
-                        "from": "gpio_4",
-                        "to": "log_6",
-                        "type": "expression",
-                        "value": "$activity[gpio_4].result==1"
-                    },
-                    {
-                        "from": "log_6",
-                        "to": "gpio_8"
-                    },
-                    {
-                        "from": "gpio_8",
-                        "to": "actreturn_10"
-                    }
+                "topic": "device/84:F3:EB:5A:42:24",
+                "qos": "1",
+                "message": null
+              },
+              "mappings": {
+                "input": [
+                  {
+                    "type": "assign",
+                    "value": "$flow.distfact",
+                    "mapTo": "message"
+                  }
                 ]
+              }
             }
-        },
-        {
-            "id": "flow:edge_gw_thingworx",
-            "data": {
-                "name": "Edge-GW-Thingworx",
-                "metadata": {
-                    "input": [
-                        {
-                            "name": "mes",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "tasks": [
-                    {
-                        "id": "log_2",
-                        "name": "Log Message",
-                        "description": "Simple Log Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
-                            "input": {
-                                "message": null,
-                                "flowInfo": "true",
-                                "addToFlow": "true"
-                            },
-                            "mappings": {
-                                "input": [
-                                    {
-                                        "type": "assign",
-                                        "value": "$flow.mes",
-                                        "mapTo": "message"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "id": "rest_3",
-                        "name": "Invoke REST Service",
-                        "description": "Simple REST Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/rest",
-                            "input": {
-                                "method": "PUT",
-                                "uri": "https://pp-1807281427ai.devportal.ptc.io/Thingworx/Things/CarThing/Properties/*",
-                                "proxy": "",
-                                "pathParams": null,
-                                "queryParams": null,
-                                "header": {
-                                    "appkey": "835e9906-2a70-4d54-9683-c9d8ded783fc",
-                                    "content-type": "application/json",
-                                    "cache-control": "no-cache",
-                                    "postman-token": "ef7cda6b-56b1-1f85-6cd6-b77786cb038e"
-                                },
-                                "skipSsl": "false",
-                                "content": null
-                            },
-                            "mappings": {
-                                "input": [
-                                    {
-                                        "type": "assign",
-                                        "value": "$flow.mes",
-                                        "mapTo": "content"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                "links": [
-                    {
-                        "from": "log_2",
-                        "to": "rest_3"
-                    }
+          },
+          {
+            "id": "actreturn_4",
+            "name": "Return",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
+              "input": {
+                "mappings": [
+                  {
+                    "mapTo": "code",
+                    "type": "literal",
+                    "value": 200
+                  },
+                  {
+                    "mapTo": "result",
+                    "type": "assign",
+                    "value": "$flow.distfact"
+                  }
                 ]
+              }
             }
-        },
-        {
-            "id": "flow:thingworx_gw_api",
-            "data": {
-                "name": "Thingworx-GW-api",
-                "metadata": {
-                    "input": [
-                        {
-                            "name": "distfact",
-                            "type": "string"
-                        }
-                    ],
-                    "output": [
-                        {
-                            "name": "code",
-                            "type": "integer"
-                        },
-                        {
-                            "name": "result",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "tasks": [
-                    {
-                        "id": "log_2",
-                        "name": "Log Message",
-                        "description": "Simple Log Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
-                            "input": {
-                                "message": null,
-                                "flowInfo": "true",
-                                "addToFlow": "true"
-                            },
-                            "mappings": {
-                                "input": [
-                                    {
-                                        "type": "assign",
-                                        "value": "$flow.distfact",
-                                        "mapTo": "message"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "id": "mqtt_3",
-                        "name": "Send MQTT to Edge",
-                        "description": "Pubishes message on MQTT topic for the edge device",
-                        "activity": {
-                            "ref": "github.com/jvanderl/flogo-components/activity/mqtt",
-                            "input": {
-                                "broker": "tcp://127.0.0.1:1883",
-                                "id": "GwToEdge",
-                                "user": "",
-                                "password": "",
-                                "topic": "device/84:F3:EB:5A:42:24",
-                                "qos": "1",
-                                "message": null
-                            },
-                            "mappings": {
-                                "input": [
-                                    {
-                                        "type": "assign",
-                                        "value": "$flow.distfact",
-                                        "mapTo": "message"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "id": "actreturn_4",
-                        "name": "Return",
-                        "description": "Simple Return Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
-                            "input": {
-                                "mappings": [
-                                    {
-                                        "mapTo": "code",
-                                        "type": "literal",
-                                        "value": 200
-                                    },
-                                    {
-                                        "mapTo": "result",
-                                        "type": "assign",
-                                        "value": "$flow.distfact"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                "links": [
-                    {
-                        "from": "log_2",
-                        "to": "mqtt_3"
-                    },
-                    {
-                        "from": "mqtt_3",
-                        "to": "actreturn_4"
-                    }
-                ]
-            }
-        }
-    ]
+          }
+        ],
+        "links": [
+          {
+            "from": "log_2",
+            "to": "mqtt_3"
+          },
+          {
+            "from": "mqtt_3",
+            "to": "actreturn_4"
+          }
+        ]
+      }
+    }
+  ]
 }
