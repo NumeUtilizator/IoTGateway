@@ -62,9 +62,9 @@
             ]
         },
         {
-            "id": "mqtt_broker",
+            "id": "mqtt_gw_broker",
             "ref": "github.com/TIBCOSoftware/flogo-contrib/trigger/mqtt",
-            "name": "MQTT Broker",
+            "name": "MQTT GW broker",
             "description": "Simple MQTT Trigger",
             "settings": {
                 "broker": "tcp://127.0.0.1:1883",
@@ -89,13 +89,6 @@
                                     "mapTo": "mes",
                                     "type": "assign",
                                     "value": "$.message"
-                                }
-                            ],
-                            "output": [
-                                {
-                                    "mapTo": "data",
-                                    "type": "assign",
-                                    "value": "$.json"
                                 }
                             ]
                         }
@@ -331,28 +324,6 @@
                 },
                 "tasks": [
                     {
-                        "id": "log_2",
-                        "name": "Log Message",
-                        "description": "Simple Log Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/log",
-                            "input": {
-                                "message": null,
-                                "flowInfo": "true",
-                                "addToFlow": "false"
-                            },
-                            "mappings": {
-                                "input": [
-                                    {
-                                        "type": "assign",
-                                        "value": "$flow.mes",
-                                        "mapTo": "message"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
                         "id": "rest_3",
                         "name": "Invoke REST Service",
                         "description": "Simple REST Activity",
@@ -367,8 +338,7 @@
                                 "header": {
                                     "appkey": "835e9906-2a70-4d54-9683-c9d8ded783fc",
                                     "content-type": "application/json",
-                                    "cache-control": "no-cache",
-                                    "postman-token": "ef7cda6b-56b1-1f85-6cd6-b77786cb038e"
+                                    "cache-control": "no-cache"
                                 },
                                 "skipSsl": "false",
                                 "content": null
@@ -383,12 +353,6 @@
                                 ]
                             }
                         }
-                    }
-                ],
-                "links": [
-                    {
-                        "from": "log_2",
-                        "to": "rest_3"
                     }
                 ]
             }
