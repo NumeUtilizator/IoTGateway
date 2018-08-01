@@ -86,9 +86,9 @@
                         "mappings": {
                             "input": [
                                 {
-                                    "mapTo": "message",
+                                    "mapTo": "mes",
                                     "type": "assign",
-                                    "value": "$.message"
+                                    "value": "$.message.mes"
                                 }
                             ]
                         }
@@ -317,32 +317,22 @@
                 "metadata": {
                     "input": [
                         {
-                            "name": "message",
+                            "name": "mes",
                             "type": "string"
-                        }
-                    ],
-                    "output": [
-                        {
-                            "name": "result",
-                            "type": "string"
-                        },
-                        {
-                            "name": "status",
-                            "type": "integer"
                         }
                     ]
                 },
                 "tasks": [
                     {
                         "id": "rest_2",
-                        "name": "&#160;REST Thingworx",
+                        "name": "REST Thingworx",
                         "description": "Simple REST Activity",
                         "activity": {
                             "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/rest",
                             "input": {
                                 "method": "PUT",
                                 "uri": "https://pp-1807281427ai.devportal.ptc.io/Thingworx/Things/CarThing/Properties/*",
-                                "proxy": null,
+                                "proxy": "",
                                 "pathParams": null,
                                 "queryParams": null,
                                 "header": {
@@ -358,40 +348,12 @@
                                 "input": [
                                     {
                                         "type": "assign",
-                                        "value": "$flow.message",
+                                        "value": "$flow.mes",
                                         "mapTo": "content"
                                     }
                                 ]
                             }
                         }
-                    },
-                    {
-                        "id": "actreturn_3",
-                        "name": "Return",
-                        "description": "Simple Return Activity",
-                        "activity": {
-                            "ref": "github.com/TIBCOSoftware/flogo-contrib/activity/actreturn",
-                            "input": {
-                                "mappings": [
-                                    {
-                                        "mapTo": "result",
-                                        "type": "assign",
-                                        "value": "$activity[rest_2].result"
-                                    },
-                                    {
-                                        "mapTo": "status",
-                                        "type": "assign",
-                                        "value": "$activity[rest_2].status"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                "links": [
-                    {
-                        "from": "rest_2",
-                        "to": "actreturn_3"
                     }
                 ]
             }
