@@ -14,6 +14,6 @@ services:
     #restart: always
     depends_on: 
       - mqtt
-  gpio:
-    build: ./gpio
-    privileged: true
+  #gpio:
+  #  build: ./gpio
+  #  privileged: true
