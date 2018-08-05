@@ -10,7 +10,7 @@ import time
 GPIO.setmode(GPIO.BOARD)
 
 # GPIO pins list based on GPIO.BOARD
-gpioList1 = [11]
+gpioList1 = [7]
 gpioList2 = [18]
 
 # Set mode for each gpio pin
