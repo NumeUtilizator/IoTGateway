@@ -11,7 +11,7 @@ GPIO.setmode(GPIO.BOARD)
 
 # GPIO pins list based on GPIO.BOARD
 #gpioList1 = [7]
-gpioList2 = [18]
+gpioList2 = [18, 11]
 
 # Set mode for each gpio pin
 #GPIO.setup(gpioList1, GPIO.OUT)
