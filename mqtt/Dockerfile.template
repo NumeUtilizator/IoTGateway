@@ -15,7 +15,7 @@ RUN apt-get clean
 RUN adduser --system --disabled-password --disabled-login mosquitto
 
 RUN mkdir -p /mqtt/config /mqtt/data /mqtt/log
-RUN sudo chown -R mosquito:mosquito /mqtt
+RUN set -xe && chown -R mosquito:mosquito /mqtt
 COPY config /mqtt/config
 VOLUME ["/mqtt/config", "/mqtt/data", "/mqtt/log"]
 
