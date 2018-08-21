@@ -1,12 +1,12 @@
 # Pull base image
-FROM resin/%%RESIN_MACHINE_NAME%%-debian:jessie
+FROM resin/%%RESIN_MACHINE_NAME%%-debian:stretch
 
 MAINTAINER github.com/NumeUtilizator
 
 RUN apt-get update && apt-get install -y wget
 
 RUN wget -q -O - http://repo.mosquitto.org/debian/mosquitto-repo.gpg.key | apt-key add -
-RUN wget -q -O /etc/apt/sources.list.d/mosquitto-jessie.list http://repo.mosquitto.org/debian/mosquitto-jessie.list
+RUN wget -q -O /etc/apt/sources.list.d/mosquitto-stretch.list http://repo.mosquitto.org/debian/mosquitto-stretch.list
 RUN apt-get install -y mosquitto
 RUN apt-get purge -y --auto-remove 
 RUN rm -rf /var/lib/apt/lists/* 
@@ -15,9 +15,10 @@ RUN apt-get clean
 #RUN adduser --system --disabled-password --disabled-login mosquitto
 
 RUN mkdir -p /mqtt/config /mqtt/data /mqtt/log
-#RUN set -xe && chown -R mosquito:mosquito /mqtt
+RUN sudo chown -R mosquitto:mosquitto /mqtt
 COPY config /mqtt/config
 VOLUME ["/mqtt/config", "/mqtt/data", "/mqtt/log"]
 
-EXPOSE 1883 9001
+EXPOSE 1883
+#EXPOSE 1883 9001
 CMD /usr/sbin/mosquitto -c /mqtt/config/mosquitto.conf
